@@ -648,12 +648,68 @@ int main()
 	while(is_Per_Ind(T,N_pop) == -1 && generation < 50000)
 	{
 		//cout<<"abcd**************"<<generation<<endl;
-		
+		int C[N_pop];
+		double prob[N_pop];
+		int sum1 = 0;
 		for(int i=0;i<N_pop;i++)
 		{
-			int par1 = lowest + (rand() % range);
-			int par2 = lowest + (rand() % range);
-			
+			C[i] = Cost(T[i]);
+			sum1 += C[i];
+		}
+		int sum2 = 0;
+		for(int i=0;i<N_pop;i++)
+		{
+			C[i] = sum1 - C[i];
+			sum2 += C[i];
+		}
+		for(int i=0;i<N_pop;i++)
+		{
+			double x = (double)C[i]/sum2;
+			//cout<<"x = "<<x<<endl;
+			//x = 1 - x;
+			if(i == 0)
+			{
+				prob[i] = x;
+			}
+			else
+			{
+				prob[i] = prob[i-1] + x;
+			}
+		}
+		/*
+		for(int i=0;i<N_pop;i++)
+		{
+			cout<<prob[i]<<" ";
+		}
+		cout<<endl;
+		*/
+		for(int i=0;i<N_pop;i++)
+		{
+			double p1 = (double)rand() / (double)RAND_MAX ;
+			double p2 = (double)rand() / (double)RAND_MAX ;
+			//int par1 = lowest + (rand() % range);
+			//int par2 = lowest + (rand() % range);
+			//cout<<p1<<"****"<<p2<<endl;
+			int par1, par2;
+			for(int j=0;j<N_pop;j++)
+			{
+				if(p1 <= prob[0])
+				{
+					par1 = 0;
+				}
+				else if(p1 <= prob[j] && p1 >= prob[j-1])
+				{
+					par1 = j;
+				}
+				if(p2 <= prob[0])
+				{
+					par2 = 0;
+				}
+				else if(p2 <= prob[j] && p2 >= prob[j-1])
+				{
+					par2 = j;
+				}
+			}
 			//cout<<par1<<"&&&&&"<<par2<<endl;
 			if(par1 != par2)
 			{
@@ -661,7 +717,7 @@ int main()
 			}
 			else
 			{
-				T1[i] = Cross_Over(T[2], T[7]);
+				T1[i] = Cross_Over(T[0], T[1]);
 			}
 			
 			vector < pair<int,int> > PC;
@@ -673,14 +729,14 @@ int main()
 			Mutate(T1[i],PC);
 			
 			//cout<<"New TimeTable"<<endl;
-			
+			/*
 			if(count == 0)
 			{
 				Display(T1[0]);
 				cout<<endl<<endl;
 				count++;
 			}
-					
+			*/		
 		}
 		//cout<<Fitness(T1,N_pop)<<" "<<Fitness(T,N_pop)<<endl;
 		vector < pair<float,int> > X;
@@ -719,7 +775,7 @@ int main()
 		generation++;
 		
 	}
-	cout<<Fitness(T,N_pop)<<endl;
+	//cout<<Fitness(T,N_pop)<<endl;
 	if(is_Per_Ind(T,N_pop) >= 0)
 	{
 		int idx = is_Per_Ind(T,N_pop);
